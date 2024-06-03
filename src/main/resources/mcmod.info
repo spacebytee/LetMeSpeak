@@ -1,0 +1,16 @@
+[
+{
+  "modid": "letmespeak",
+  "name": "LetMeSpeak",
+  "description": "Stops chat interruptions.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["SpaceByte"],
+  "credits": "me.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
