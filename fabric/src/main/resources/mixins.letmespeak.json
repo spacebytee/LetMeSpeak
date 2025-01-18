@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "com.bytespacegames.letmespeak.mixins",
+  "refmap": "letmespeak-refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinGuiChat"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

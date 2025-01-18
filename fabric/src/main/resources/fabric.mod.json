@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "letmespeak",
+  "version": "${version}",
+  "name": "LetMeSpeak",
+  "description": "Stops chat interruptions.",
+  "authors": [
+    "SpaceByte"
+  ],
+  "contact": {},
+  "license": "ARR",
+  "icon": "assets/letmespeak/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.bytespacegames.letmespeak.LetMeSpeak"
+    ]
+  },
+  "mixins": [
+    "mixins.letmespeak.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "minecraft": "1.8.9"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
