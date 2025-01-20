@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-
+license="ARR"
 # A version range to match for said mod loader - for regular FML @Mod it will be the minecraft version (without the 1.)
 loaderVersion="[32,)" #mandatory
 
@@ -8,7 +8,6 @@ authors="spacebyte" #optional
 [[mods]] #mandatory
 
 modId="letmespeak" #mandatory
-
 version="${file.jarVersion}" #mandatory
 
 displayName="LetMeSpeak" #mandatory
