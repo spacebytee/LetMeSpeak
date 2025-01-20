@@ -4,7 +4,7 @@ buildscript {
         maven { url 'https://repo.spongepowered.org/maven'}
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
         classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
@@ -26,7 +26,7 @@ sourceCompatibility = targetCompatibility = 1.8 // Java version to compile for.
 compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
 
 minecraft {
-    version = minecraft_version + "-" + forge_version + "-" + minecraft_version
+    version = forge_version
     runDir = "run" // Where to put the forge run data (mods, configs, etc.), in a normal minecraft installation this is .minecraft
     mappings = mcp_mappings // The mappings for 1.8.9
     makeObfSourceJar = false // Disables the creation of a source jar

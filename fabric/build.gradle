@@ -8,18 +8,17 @@ base.archivesName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-repositories {}
 
 loom {
     // Only needed for versions not available from vanilla launcher by default.
     // customMinecraftManifest.set("https://meta.legacyfabric.net/v2/manifest/${minecraft_version}")
 
     // Required by 1.7.x
-    runs {
+    /*runs {
     client {
      		programArgs "--userProperties", "{}"
     }
-     }
+     }*/
 }
 
 legacyLooming {
