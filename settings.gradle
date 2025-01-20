@@ -12,4 +12,4 @@ pluginManagement {
     }
 }
 rootProject.name = 'LetMeSpeak'
-include 'common', 'fabric'
+include 'common', 'forge'

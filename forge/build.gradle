@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     id "java"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
 apply plugin: "net.minecraftforge.gradle.forge"
@@ -26,9 +26,9 @@ sourceCompatibility = targetCompatibility = 1.8 // Java version to compile for.
 compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
 
 minecraft {
-    version = "1.8.9-11.15.1.2318-1.8.9" // Version 1.8.9
+    version = minecraft_version + "-" + forge_version + "-" + minecraft_version
     runDir = "run" // Where to put the forge run data (mods, configs, etc.), in a normal minecraft installation this is .minecraft
-    mappings = "stable_22" // The mappings for 1.8.9
+    mappings = mcp_mappings // The mappings for 1.8.9
     makeObfSourceJar = false // Disables the creation of a source jar
 }
 
@@ -167,3 +167,12 @@ sourceSets {
         ext.refMap = "mixins.letmespeak.refmap.json"
     }
 }
+
+task copyCommonSources(type: Copy) {
+    from project(':common').fileTree('src/main')
+    into 'src/main'
+}
+
+// this works for some reason
+compileJava.dependsOn(copyCommonSources)
+processResources.dependsOn(copyCommonSources)

@@ -16,7 +16,7 @@ subprojects {
     }
 }
 
-project(':fabric') {
+/*project(':fabric') {
     repositories {
         maven {
             name = "Fabric"
@@ -27,10 +27,10 @@ project(':fabric') {
             url = "https://maven.legacyfabric.net/"
         }
     }
-}
+}*/
 
-//project(':forge') {
-//    repositories {
-//        mavenCentral()
-//    }
-//}
+project(':forge') {
+    repositories {
+        mavenCentral()
+    }
+}

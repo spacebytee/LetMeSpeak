@@ -21,7 +21,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.14.19",
-    "minecraft": "1.8.9"
+    "minecraft": "1.7.10"
   },
   "suggests": {
     "another-mod": "*"
