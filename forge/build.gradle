@@ -1,20 +1,19 @@
 buildscript {
     repositories {
-        maven { url "https://maven.minecraftforge.net" }
         maven { url 'https://repo.spongepowered.org/maven'}
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.+'
         classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
 
 plugins {
     id "java"
-    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)'
 }
 
-apply plugin: "net.minecraftforge.gradle"
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
@@ -23,11 +22,11 @@ version = "1.0" // The version number of your mod.
 group = "com.bytespacegames.letmespeak" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
 archivesBaseName = "letmespeak" // This is the name of the jar that is generated.
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200723-1.16.1'
+    mappings channel: mapping_channel, version: mapping_version
+    reobf = false
     runs {
         client {
             workingDirectory project.file('run')
@@ -60,7 +59,7 @@ def systemOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
  * compile -> library only available at compile time (not accessible at runtime)
  */
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.1-32.0.63'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation project(':common')
     shade('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
@@ -86,7 +85,6 @@ shadowJar {
     from(project(':common').sourceSets.main.output)
     archiveClassifier.set("")
 }
-jar.finalizedBy('reobfJar')
 /**
  * Adds the manifest values
  * FMLCorePlugin -> Put the Mixin Loader here
