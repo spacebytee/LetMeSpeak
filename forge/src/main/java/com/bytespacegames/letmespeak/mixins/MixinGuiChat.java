@@ -1,28 +1,33 @@
 package com.bytespacegames.letmespeak.mixins;
 
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.screen.ChatScreen;
+import com.bytespacegames.letmespeak.ChatStateManager;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.bytespacegames.letmespeak.ChatStateManager;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(GuiChat.class)
+@Mixin(ChatScreen.class)
 public class MixinGuiChat {
     @Shadow
-    protected GuiTextField inputField;
-    @Inject(method="keyTyped", at=@At("RETURN"))
-    protected void mixin$keyTyped(char typedChar, int keyCode, CallbackInfo ci) {
-        if (keyCode == 1 || keyCode == 156 || keyCode == 28) {
+    protected TextFieldWidget inputField;
+    @Inject(method="keyPressed", at=@At("RETURN"))
+    protected void mixin$keyPressed(int keycode, int scancode, int modifiers, CallbackInfoReturnable<Boolean> ci) {
+        if (scancode == 1 || scancode == 156 || scancode == 28) {
             ChatStateManager.INSTANCE.resetState();
         } else {
             ChatStateManager.INSTANCE.updateState(inputField.getText());
         }
     }
-    @Inject(method="initGui", at=@At("RETURN"))
-    public void mixin$initGui(CallbackInfo ci) {
+    @Inject(method="init", at=@At("RETURN"))
+    public void mixin$init(CallbackInfo ci) {
+        if (ChatStateManager.INSTANCE == null) {
+            System.out.println("CSM was null, this shouldn't happen!");
+            new ChatStateManager();
+        }
         if (!ChatStateManager.INSTANCE.restoreState())  {
             return;
         }

@@ -1,15 +1,12 @@
 pluginManagement {
     repositories {
+        jcenter()
         maven {
-            name = "Fabric"
-            url = "https://maven.fabricmc.net/"
-        }
-        maven {
-            name = "legacy-fabric"
-            url = "https://maven.legacyfabric.net/"
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
     }
 }
 rootProject.name = 'LetMeSpeak'
-include 'common', 'fabric'
+include 'common', 'forge'

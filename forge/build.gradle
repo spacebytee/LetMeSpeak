@@ -4,8 +4,8 @@ buildscript {
         maven { url 'https://repo.spongepowered.org/maven'}
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
-        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.+'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
 
@@ -14,22 +14,31 @@ plugins {
     id "com.github.johnrengelman.shadow" version "2.0.4"
 }
 
-apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "net.minecraftforge.gradle"
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven-publish'
 
 //TODO: Change the version, group, and archivesBaseName to your own.
 version = "1.0" // The version number of your mod.
-group = "com.bytesoacegames.letmespeak" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
+group = "com.bytespacegames.letmespeak" // This is the group of the mod (usually domain or your name -> at.manuthebyte)
 archivesBaseName = "letmespeak" // This is the name of the jar that is generated.
 
-sourceCompatibility = targetCompatibility = 1.8 // Java version to compile for.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
 
 minecraft {
-    version = forge_version
-    runDir = "run" // Where to put the forge run data (mods, configs, etc.), in a normal minecraft installation this is .minecraft
-    mappings = mcp_mappings // The mappings for 1.8.9
-    makeObfSourceJar = false // Disables the creation of a source jar
+    mappings channel: 'snapshot', version: '20200723-1.16.1'
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            mods {
+                letmespeak {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 // This is the configuration for the shadow plugin, which is used to add libraries to the jar.
@@ -51,6 +60,8 @@ def systemOs = System.getProperty("os.name").toLowerCase(Locale.ENGLISH)
  * compile -> library only available at compile time (not accessible at runtime)
  */
 dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.1-32.0.63'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation project(':common')
     shade('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
         exclude module: 'launchwrapper'
@@ -59,70 +70,12 @@ dependencies {
         exclude module: 'commons-io'
         exclude module: 'log4j-core'
     }
-
-    if (systemOs.contains("mac"))
-    {
-        compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
-        compile 'org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209'
-        compile 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
-    }
-    else if (systemOs.contains("linux"))
-    {
-        compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1'
-        compile 'org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1'
-        compile 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
-    }
 }
 
-if (systemOs.contains("mac"))
-{
-    configurations.all
-    {
-        resolutionStrategy
-        {
-            dependencySubstitution
-            {
-                substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.2-nightly-201408222') with module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209')
-                substitute module('org.lwjgl.lwjgl:lwjgl:2.9.2-nightly-201408222') with module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209')
-            }
-            force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209'
-        }
-    }
-} else if (systemOs.contains("linux"))
-{
-    configurations.all
-    {
-        resolutionStrategy
-        {
-            dependencySubstitution
-            {
-                substitute module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209') using module('org.lwjgl.lwjgl:lwjgl_util:2.9.4-babric.1')
-                substitute module('org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209') using module('org.lwjgl.lwjgl:lwjgl:2.9.4-babric.1')
-            }
-            force 'org.lwjgl.lwjgl:lwjgl-platform:2.9.4-babric.1'
-        }
-    }
-}
-
-
-processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // Replaces version in mcmod.info with the project version.
-    from(sourceSets.main.resources.srcDirs) {
-        include "mcmod.info"
-
-        //replace version and mcversion
-        expand "version":project.version, "mcversion":project.minecraft.version
-    }
-
-    // Copies all other resources.
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "mcmod.info"
-    }
-
-    rename '(.+_at.cfg)', 'META-INF/$1'
+mixin {
+    // MixinGradle Settings
+    add sourceSets.main, 'mixins.letmespeak.refmap.json'
+    config 'mixins.letmespeak.json'
 }
 
 // This is the configuration for the shadow plugin, which is used to add libraries to the jar.
@@ -130,14 +83,10 @@ shadowJar {
     dependencies {}
     configurations = [project.configurations.shade] // Adds the gradle configuration "shade" so we can use it.
     duplicatesStrategy DuplicatesStrategy.EXCLUDE // Prevents duplicates
-    classifier ""
+    from(project(':common').sourceSets.main.output)
+    archiveClassifier.set("")
 }
-
-reobf {
-    // Reobfuscates the jar.
-    shadowJar {}
-}
-
+jar.finalizedBy('reobfJar')
 /**
  * Adds the manifest values
  * FMLCorePlugin -> Put the Mixin Loader here
@@ -149,30 +98,34 @@ reobf {
 //TODO: Add your own MixinConfig(s)
 jar {
     manifest.attributes(
-        "FMLCorePlugin" : "com.bytespacegames.letmespeak.mixins.MixinLoader",
+        "Specification-Title": "letmespeak",
+        "Implementation-Title": "letmespeak",
+        "Specification-Version": "1",
         "ForceLoadAsMod": true,
         "TweakOrder": 0,
         "ModSide": "CLIENT",
-        'FMLCorePluginContainsFMLMod': true,
         'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
         'MixinConfigs': 'mixins.letmespeak.json'
     )
 }
 
-// This adds the refmap.
-// (You do not need to create the refmap, it is created automatically by the mixin plugin)
-//TODO: Change the refmap name to your own
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
 sourceSets {
     main {
         ext.refMap = "mixins.letmespeak.refmap.json"
     }
 }
-
-task copyCommonSources(type: Copy) {
-    from project(':common').fileTree('src/main')
-    into 'src/main'
+tasks.named('jar') {
+    from(project(':common').sourceSets.main.output)
 }
-
-// this works for some reason
-compileJava.dependsOn(copyCommonSources)
-processResources.dependsOn(copyCommonSources)
